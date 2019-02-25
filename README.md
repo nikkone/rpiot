@@ -1,8 +1,8 @@
 # Raspberry Pi 3 IoT Home Server with mosquitto, nodered, influxdb and grafana
-Settup done in windows 10
-## Get the latest image and flash the SD card
+Setup on another computer using windows 10
+## Making the SD card for the RPi
 
-* Download the latest image from https://www.raspberrypi.org/downloads/raspbian/
+* Download image from https://www.raspberrypi.org/downloads/raspbian/
 
 * Write the image to the SD card
   * https://www.balena.io/etcher/ works well
@@ -16,35 +16,30 @@ without any extension, onto the boot partition of the SD card from another compu
 * Configure the wifi connection:
   * https://www.raspberrypi.org/documentation/configuration/wireless/headless.md
   * Make a textfile named `wpa_supplicant.conf` in the /boot/ partition
-```
-country=NO
-ctrl_interface=DIR=/var/run/wpa_supplicant GROUP=netdev
-update_config=1
+   * More info: https://www.raspberrypi.org/documentation/configuration/wireless/wireless-cli.md
+ ```
+ country=NO
+ ctrl_interface=DIR=/var/run/wpa_supplicant GROUP=netdev
+ update_config=1
 
-network={
-    ssid="<ssid1>"
-    psk="<pass1>"
-    id_str="Home"
-    priority=1
-}
-```
-  * More info: https://www.raspberrypi.org/documentation/configuration/wireless/wireless-cli.md
-
-* Safe remove the SD card from your computer and insert it into the RPi
+ network={
+     ssid="<ssid1>"
+     psk="<pass1>"
+     id_str="Home"
+     priority=1
+ }
+ ```
+* Remove the SD card from your computer and insert it into the RPi
 * Wait until RPi has booted
 * Find RPis IP adress from the router
 * Connect to it using ssh
   * [Putty](https://www.putty.org/) for windows
   * The default RPi username is `pi`, and the password is `raspberry`:
   
-## General setup
+## General setup through ssh
 * Change the password for the `pi` user:
 ```
 passwd
-```
-* Check internet connectivity:
-```
-ping google.com
 ```
 * Upgrade packages:
 ```
@@ -80,9 +75,11 @@ password_file /etc/mosquitto/passwd
 ```
 
 * Autostart service
-
+* Testing can be done with an mqtt client:
+ * Search for mqtt chrome extension
 ### Time series database - InfluxDB
-
+* https://docs.influxdata.com/influxdb/v1.7/introduction/installation/ 
+* https://community.influxdata.com/t/raspberry-pi-installation-instructions/5515/3
 * Add the repository
 
 ```
@@ -112,6 +109,7 @@ alias idb='influx -precision "rfc3339"'
 ```
 
 ### System monitoring - Telegraf
+* https://www.influxdata.com/time-series-platform/telegraf/
 * Telegraf saves system metrics to an InfluxDB database
 
 ```
@@ -125,8 +123,8 @@ $ sudo service telegraf start
 
 ```
 
-### Node-RED
-
+### Connecting services - Node-RED
+* https://nodered.org/docs/hardware/raspberrypi
 * Install
 ```
 bash <(curl -sL https://raw.githubusercontent.com/node-red/raspbian-deb-package/master/resources/update-nodejs-and-nodered)
@@ -143,9 +141,9 @@ sudo npm install -g node-red-admin
 node-red-admin hash-pw
 vi settings.js
 ```
-
-### Grafana
-
+* It should now be available from the browser on another computer `http://[IP of RPi]:1880`.
+### Presenting data - Grafana
+* http://docs.grafana.org/installation/debian/
 * Download it and install it
 
 ```
