@@ -170,3 +170,8 @@ sudo systemctl start grafana-server
   * Can be tested by:
   * Setting local InfluxDB database `telegraf` as datasource
   * Creating a dashboard, then adding a graph of one of the stats
+## Usefull commands
+* Listening ports on the RPi
+```
+netstat -l
+```
