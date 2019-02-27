@@ -68,18 +68,45 @@ sudo apt-get install mosquitto mosquitto-clients
   * Create/edit mosquitto user:password file by: `sudo mosquitto_passwd -c /etc/mosquitto/passwd <user>`
   * `<user>` = Username of added user
   * When run, asks for password, then encrypt it and writes it to `/etc/mosquitto/passwd`
+  * Adding more users can be done by `sudo mosquitto_passwd -b /etc/mosquitto/passwd <another_user> password`. After using this, clear the command line history by `history -c`
   * Tell mosquitto to use user:password file and reject anonymous clients:
-  * Open configfile
-`
-sudo nano /etc/mosquitto/conf.d/default.conf
-`
+  * Open configfile by: `sudo nano /etc/mosquitto/conf.d/default.conf`
   * Add this to the file
 ```
 allow_anonymous false
 password_file /etc/mosquitto/passwd
 ```
 
-* Autostart service
+* Autostart service (not tested)
+```
+sudo systemctl stop mosquitto
+//$ sudo update-rc.d mosquitto remove
+//$ sudo rm /etc/init.d/mosquitto
+sudo nano /etc/systemd/system/mosquitto.service
+
+[Unit]
+Description=Mosquitto MQTT Broker daemon
+Documentation=man:mosquitto(8)
+Documentation=man:mosquitto.conf(5)
+ConditionPathExists=/etc/mosquitto/mosquitto.conf 
+After=xdk-deamon.service
+//After=network.target
+//Requires=network.target
+
+[Service]
+//Type=simple  
+ExecStart=/usr/sbin/mosquitto -c /etc/mosquitto/mosquitto.conf
+//ExecReload=/bin/kill
+//Restart=on-failure
+Restart=always
+
+[Install]
+WantedBy=multi-user.target  
+
+$ sudo systemctl daemon-reload
+$ sudo systemctl enable mosquitto
+$ sudo systemctl start mosquitto.service
+```
 * Testing can be done with an mqtt client:
  * Search for mqtt chrome extension
 ### Time series database - InfluxDB
