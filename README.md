@@ -63,13 +63,18 @@ cd
 sudo apt-get update
 sudo apt-get install mosquitto mosquitto-clients
 ```
-* Secure the connection:
 
+* Restrict access by requiring username and password for clients:
+  * Create/edit mosquitto user:password file by: `sudo mosquitto_passwd -c /etc/mosquitto/passwd <user>`
+  * `<user>` = Username of added user
+  * When run, asks for password, then encrypt it and writes it to `/etc/mosquitto/passwd`
+  * Tell mosquitto to use user:password file and reject anonymous clients:
+  * Open configfile
+`
+sudo nano /etc/mosquitto/conf.d/default.conf
+`
+  * Add this to the file
 ```
-$ sudo mosquitto_passwd -c /etc/mosquitto/passwd <user>
-$ sudo vi /etc/mosquitto/conf.d/default.conf
-
-user mosquitto
 allow_anonymous false
 password_file /etc/mosquitto/passwd
 ```
