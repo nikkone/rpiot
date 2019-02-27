@@ -52,15 +52,9 @@ sudo raspi-config
 ```
 ## Installing services
 ### MQTT broker - Mosquitto
-* Add the repository and install Mosquitto:
+* Install Mosquitto:
 
 ```
-wget http://repo.mosquitto.org/debian/mosquitto-repo.gpg.key
-sudo apt-key add mosquitto-repo.gpg.key
-cd /etc/apt/sources.list.d/
-sudo wget http://repo.mosquitto.org/debian/mosquitto-stretch.list
-cd
-sudo apt-get update
 sudo apt-get install mosquitto mosquitto-clients
 ```
 
@@ -77,35 +71,9 @@ allow_anonymous false
 password_file /etc/mosquitto/passwd
 ```
 
-* Autostart service (not tested)
+* Autostart service
 ```
-sudo systemctl stop mosquitto
-//$ sudo update-rc.d mosquitto remove
-//$ sudo rm /etc/init.d/mosquitto
-sudo nano /etc/systemd/system/mosquitto.service
-
-[Unit]
-Description=Mosquitto MQTT Broker daemon
-Documentation=man:mosquitto(8)
-Documentation=man:mosquitto.conf(5)
-ConditionPathExists=/etc/mosquitto/mosquitto.conf 
-After=xdk-deamon.service
-//After=network.target
-//Requires=network.target
-
-[Service]
-//Type=simple  
-ExecStart=/usr/sbin/mosquitto -c /etc/mosquitto/mosquitto.conf
-//ExecReload=/bin/kill
-//Restart=on-failure
-Restart=always
-
-[Install]
-WantedBy=multi-user.target  
-
-$ sudo systemctl daemon-reload
-$ sudo systemctl enable mosquitto
-$ sudo systemctl start mosquitto.service
+sudo systemctl enable mosquitto
 ```
 * Testing can be done with an mqtt client:
  * Search for mqtt chrome extension
@@ -115,29 +83,22 @@ $ sudo systemctl start mosquitto.service
 * Add the repository
 
 ```
-
+curl -sL https://repos.influxdata.com/influxdb.key | sudo apt-key add -
+echo "deb https://repos.influxdata.com/debian stretch stable" | sudo tee /etc/apt/sources.list.d/influxdb.list
+sudo apt-get update
 ```
 
 * Install
 
 ```
-$ sudo apt-get -f install
-$ sudo apt-get install influxdb
+sudo apt-get install influxdb
 ```
 
 * Start service
 
 ```
-$ sudo service influxdb start
-```
-
-* Configure console to use proper timestamps
-
-```
-$ vi ~/.bash_aliases
-
-(...)
-alias idb='influx -precision "rfc3339"'
+sudo systemctl unmask influxdb.service
+sudo systemctl start influxdb
 ```
 
 ### System monitoring - Telegraf
@@ -152,9 +113,14 @@ $ sudo service telegraf start
 * Check the database
 
 ```
-
+influx
+show databases;
 ```
-
+* There should be two databases now:
+```
+_internal
+telegraf
+```
 ### Connecting services - Node-RED
 * https://nodered.org/docs/hardware/raspberrypi
 * Install
