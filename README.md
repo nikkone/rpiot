@@ -127,17 +127,25 @@ telegraf
 ```
 bash <(curl -sL https://raw.githubusercontent.com/node-red/raspbian-deb-package/master/resources/update-nodejs-and-nodered)
 ```
-* Start
+* Enable start on boot
 ```
-node-red-start
+sudo systemctl enable nodered.service
 ```
-* Security (uncomment adminAuth part in settings.js replacing username and password)
-
+* Make a password for the configuration
+  * https://nodered.org/docs/security
 ```
 cd ~/.node-red
 sudo npm install -g node-red-admin
 node-red-admin hash-pw
-vi settings.js
+```
+* Uncomment adminAuth part in settings.js replacing username and password(default is admin/password)
+  * Tip: Add the password hash returned by `node-red-admin hash-pw`, not a planetext password
+```
+nano settings.js
+```
+* Either reboot or start manually:
+```
+node-red-start
 ```
 * It should now be available from the browser on another computer `http://[IP of RPi]:1880`.
 ### Presenting data - Grafana
