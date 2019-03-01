@@ -147,32 +147,45 @@ nano settings.js
 ```
 node-red-start
 ```
-* It should now be available from the browser on another computer `http://[IP of RPi]:1880`.
+* It should now be available from `http://[IP of RPi]:1880`
+* To use influxdb in nodered, goto `Manage palette` and install `node-red-contrib-influxdb`
 ### Presenting data - Grafana
 * http://docs.grafana.org/installation/debian/
-* Download it and install it
-
+* Add repository
 ```
+deb https://packages.grafana.com/oss/deb stable main
 ```
-
-* Install plugins
-
+* Add gpg to install signed packages
 ```
+curl https://packages.grafana.com/gpg.key | sudo apt-key add -
+```
+* Ensure that the repository is being used
+  * The version of grafana from rpi default repository is something 2.x.x
+  * The version from the official repository is >= 6.0.0
+  * Doing this wrong may result in a lot of extra work to get systemd service to work properly.
+  * The `-s` in the `install grafana` line means that its only simulating an install, so you can check the version.
+```
+sudo apt-get update
+sudo apt-get -s install grafana
+```
+* Actually do the install by 
+```
+sudo apt-get install grafana
 ```
 
 * Enable service autostart at boot
 
 ```
-sudo systemctl enable grafana-server
+sudo systemctl enable grafana-server.service
 ```
 
-* Start service
+* Start service or reboot to check if it starts by itself
 
 ```
 sudo systemctl start grafana-server
 ```
 
-* It should now be available from the browser on another computer `http://[IP of RPi]:3000`.
+* It should now be available from the browser at `http://[IP of RPi]:3000`.
   * Can be tested by:
   * Setting local InfluxDB database `telegraf` as datasource
   * Creating a dashboard, then adding a graph of one of the stats
@@ -180,4 +193,8 @@ sudo systemctl start grafana-server
 * Listening ports on the RPi
 ```
 netstat -l
+```
+* List systemd services
+```
+systemctl list-units
 ```
