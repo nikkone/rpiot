@@ -186,9 +186,10 @@ sudo systemctl start grafana-server
 ```
 
 * It should now be available from the browser at `http://[IP of RPi]:3000`.
-  * Can be tested by:
-  * Setting local InfluxDB database `telegraf` as datasource
-  * Creating a dashboard, then adding a graph of one of the stats
+  * Default credentials: admin/admin
+* To test if its working:
+  * Configure local InfluxDB database `telegraf` as datasource
+  * Create a dashboard and add a graph of some stats
 ## Usefull commands
 * Listening ports on the RPi
 ```
